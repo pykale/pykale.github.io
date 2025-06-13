@@ -16,7 +16,7 @@
 &lt;h2 id="youre-looking-at-a-wowchemy-_widget_">You&amp;rsquo;re looking at a Wowchemy &lt;em>widget&lt;/em>&lt;/h2>
 &lt;div class="alert alert-note">
 &lt;div>
-&lt;p>This homepage section is an example of adding &lt;a href="https://sourcethemes.com/academic/docs/writing-markdown-latex/">elements&lt;/a> to the &lt;a href="https://sourcethemes.com/academic/docs/widgets/">&lt;em>Blank&lt;/em> widget&lt;/a>.&lt;/p>
+&lt;p>This homepage section is an example of adding &lt;a href="https://sourcethemes.com/academic/docs/writing-markdown-latex/" target="_blank" rel="noopener">elements&lt;/a> to the &lt;a href="https://sourcethemes.com/academic/docs/widgets/" target="_blank" rel="noopener">&lt;em>Blank&lt;/em> widget&lt;/a>.&lt;/p>
 &lt;p>Backgrounds can be applied to any section. Here, the &lt;em>background&lt;/em> option is set give a &lt;em>color gradient&lt;/em>.&lt;/p>
 &lt;p>&lt;strong>To remove this section, delete &lt;code>content/home/demo.md&lt;/code>.&lt;/strong>&lt;/p>
 &lt;/div>
