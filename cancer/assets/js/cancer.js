@@ -13,6 +13,7 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
   let zoom = 1, panX = 0, panY = 0;
   let lastFocused = null;
   let pinnedKeyword = null;
+  let activeStage = null, stageScrollLock = 0;
 
   const els = {
     app: document.getElementById('app'),
@@ -34,20 +35,17 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
     hoverCard: document.getElementById('hoverCard'),
     searchInput: document.getElementById('searchInput'),
     legendToggle: document.getElementById('legendToggle'),
-    statusOptions: document.getElementById('statusOptions'),
-    dataTypeOptions: document.getElementById('dataTypeOptions'),
     scrim: document.getElementById('scrim'),
     panel: document.getElementById('panel'),
   };
 
   const STATUS_LABEL = { motivation:'Motivation', gap:'Named Gap', built:'Built', evidence:'Evidence', context:'Context', ask:'The Ask' };
-  const KIND_ORDER = ['all','motivation','gap','built','evidence','context','ask'];
 
   function modChip(m){ return `<span class="mchip">${ICONS[m]}${DATATYPE_LABEL[m]}</span>`; }
 
   function matches(c){
-    if(filterJourney!=='all' && c.journey!==filterJourney) return false;
-    if(filterDataType!=='all' && !c.dataTypes.includes(filterDataType)) return false;
+    if(view==='cluster' && filterJourney!=='all' && c.journey!==filterJourney) return false; // Story view always shows every stage
+    if(view==='cluster' && filterDataType!=='all' && !c.dataTypes.includes(filterDataType)) return false;
     if(filterStatus!=='all' && c.kind!==filterStatus) return false;
     if(query){
       const hay = `${c.title} ${c.subtitle} ${c.summary} ${SECTIONS[c.journey].label}`.toLowerCase();
@@ -64,48 +62,46 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
     render();
   });
 
-  // ---------------- sidebar: filters accordion ----------------
-  const filtersToggle = document.getElementById('filtersToggle');
-  const filtersBody = document.getElementById('filtersBody');
-  filtersToggle.addEventListener('click', ()=>{
-    const open = filtersBody.hidden;
-    filtersBody.hidden = !open;
-    filtersToggle.classList.toggle('is-open', open);
-  });
-
-  els.statusOptions.innerHTML = KIND_ORDER.map(v=>
-    `<button class="facet-opt${v==='all'?' is-active':''}" data-status="${v}">${v==='all' ? 'All kinds' : STATUS_LABEL[v]}</button>`).join('');
-  els.statusOptions.addEventListener('click', e=>{
-    const btn = e.target.closest('button'); if(!btn) return;
-    filterStatus = btn.dataset.status;
-    els.statusOptions.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active', b===btn));
-    render();
-  });
-
-  els.dataTypeOptions.innerHTML = `<button class="facet-opt is-active" data-dt="all">All streams</button>` +
-    Object.entries(DATATYPE_LABEL).map(([k,l])=>`<button class="facet-opt" data-dt="${k}">${ICONS[k]}${l}</button>`).join('');
-  els.dataTypeOptions.addEventListener('click', e=>{
-    const btn = e.target.closest('button'); if(!btn) return;
-    filterDataType = btn.dataset.dt;
-    els.dataTypeOptions.querySelectorAll('button').forEach(b=>b.classList.toggle('is-active', b===btn));
-    render();
-  });
-
   // ---------------- sidebar: story quick list (tree mode) ----------------
   function renderDomainList(){
-    const allRow = `<button class="domain-item${filterJourney==='all'?' is-active':''}" data-journey="all">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
-        <span class="lbl">All stages</span></button>`;
-    const rows = Object.entries(SECTIONS).map(([k,d])=>
-      `<button class="domain-item${filterJourney===k?' is-active':''}" data-journey="${k}" style="color:hsl(${d.hue} var(--stage-s) var(--stage-l))">
+    const current = activeStage || Object.keys(SECTIONS)[0];
+    els.domainList.innerHTML = Object.entries(SECTIONS).map(([k,d])=>
+      `<button class="domain-item${current===k?' is-active':''}" data-scroll-stage="${k}" style="color:hsl(${d.hue} var(--stage-s) var(--stage-l))">
         ${d.icon}<span class="lbl" style="color:var(--ink-soft)">${d.label}</span></button>`).join('');
-    els.domainList.innerHTML = allRow + rows;
   }
   els.domainList.addEventListener('click', e=>{
-    const btn = e.target.closest('[data-journey]'); if(!btn) return;
-    filterJourney = btn.dataset.journey;
-    render();
+    const btn = e.target.closest('[data-scroll-stage]'); if(btn) scrollToStage(btn.dataset.scrollStage);
   });
+
+  // Sidebar stages and the story spine both scroll to a section and share one highlight.
+  function setActiveStage(key){
+    activeStage = key;
+    document.querySelectorAll('.spine-step[data-scroll-stage],.domain-item[data-scroll-stage]').forEach(b=>b.classList.toggle('is-active', b.dataset.scrollStage===key));
+  }
+  function scrollToStage(key){
+    const target = document.getElementById(`story-${key}`); if(!target) return;
+    setActiveStage(key);
+    stageScrollLock = Date.now() + 250; // keep the clicked stage highlighted while the smooth scroll runs
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+  function storyScroller(){ // the element that actually scrolls the story: the story panel on desktop, the body on narrow screens
+    for(let el = els.treeView; el && el !== document.documentElement; el = el.parentElement){
+      const oy = getComputedStyle(el).overflowY;
+      if((oy==='auto' || oy==='scroll') && el.scrollHeight > el.clientHeight + 1) return el;
+    }
+    return document.scrollingElement;
+  }
+  function updateActiveStage(){
+    if(view!=='tree') return;
+    if(Date.now() < stageScrollLock){ stageScrollLock = Date.now() + 250; return; }
+    const sections = [...els.treeView.querySelectorAll('.story-section')]; if(!sections.length) return;
+    const scroller = storyScroller();
+    let active = sections[0].id;
+    sections.forEach(s=>{ if(s.getBoundingClientRect().top < 210) active = s.id; });
+    if(scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 4) active = sections[sections.length-1].id;
+    setActiveStage(active.replace('story-',''));
+  }
+  document.addEventListener('scroll', updateActiveStage, {capture:true, passive:true}); // scroll events don't bubble; capture sees whichever element scrolls
 
   // ---------------- search ----------------
   els.searchInput.addEventListener('input', e=>{ query = e.target.value.trim().toLowerCase(); render(); });
@@ -572,13 +568,6 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
   els.viewport.addEventListener('pointerleave', ()=>{ panning=false; els.viewport.classList.remove('is-panning'); });
 
   // ---------------- story chapters ----------------
-  const SECTION_COPY = {
-    gaps:'The public case study and three precise extensions beyond its published proof of concept.',
-    built:'How reusable loading, encoding, fusion, survival modelling and evaluation fit together.',
-    results:'How multimodal inputs and patient partitions are compared consistently in the case study.',
-    landscape:'Related multimodal capability available through the wider PyKale ecosystem.',
-    ask:'Bring your clinical question and data to shape a rigorous, reproducible KaleCancer study with us.'
-  };
 
   function resultMetrics(c){
     return '';
@@ -590,51 +579,40 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
     return `<article class="tcard${featured}" data-id="${c.id}" style="--h:${d.hue}">
       <div class="tcard-head">
         <span style="color:hsl(${d.hue} var(--stage-s) var(--stage-l))">${d.icon}</span>
-        <div><div class="tcard-title">${c.title}</div><div class="tcard-sub">${c.subtitle}</div></div>
+        <div><div class="tcard-title">${c.title}</div></div>
       </div>
       ${resultMetrics(c)}
       <p class="tcard-summary">${c.summary}</p>
-      <div class="tcard-mods">${c.dataTypes.map(modChip).join('')}</div>
       ${group==='ask'?'<div class="tcard-foot"><a class="tcard-cta" href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a></div>':''}
     </article>`;
   }
 
   function renderTree(){
-    const list = STORY_CAPABILITIES.filter(matches);
+    const list = STORY_CAPABILITIES.filter(c=>c.id!=='hancock-benchmark').filter(matches); // HANCOCK is summarised in the case-study panel
     if(!list.length){
       els.treeView.innerHTML = `<div class="empty">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        <p>Nothing matches your filters.</p>
-        <button id="clearFilters">Clear filters</button>
+        <p>Nothing matches your search.</p>
+        <button id="clearFilters">Clear search</button>
       </div>`;
       document.getElementById('clearFilters').addEventListener('click', ()=>{
         filterJourney='all'; filterDataType='all'; filterStatus='all'; query=''; els.searchInput.value='';
-        els.statusOptions.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('is-active', i===0));
-        els.dataTypeOptions.querySelectorAll('button').forEach((b,i)=>b.classList.toggle('is-active', i===0));
         render();
       });
       return;
     }
     const visibleSections = Object.entries(SECTIONS).filter(([key])=>list.some(c=>c.journey===key));
-    const caseStats = `<div class="case-stats"><p class="story-kicker">Multimodal survival modelling</p><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>3</strong><span>research gaps addressed</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span></span></div></div>`;
+    const caseStats = `<div class="case-stats"><p class="story-kicker">Multimodal survival modelling</p><p class="case-stats-text">HANCOCK is a public head-and-neck cancer cohort that links clinical records and whole-slide pathology images to long-term outcomes. It serves as KaleCancer's current test bed for the three research gaps below.</p><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>7</strong><span>data modalities</span><em class="story-stat-note">Currently supported by KaleCancer: clinical, imaging (WSI)</em></span><span class="story-stat"><strong>3</strong><span>research gaps</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span><em class="story-stat-note">Early, intermediate, late</em></span></div></div>`;
     const intro = `<div class="story-intro"><img class="hero-logo" src="assets/images/kalecancer-logo.png" alt="" aria-hidden="true"><h2>From patient data to reliable risk-over-time research.</h2><p>This overview traces the path from a clinical need, through the HANCOCK case study and the reusable KaleCancer workflow, to evaluation and the design of future studies.</p><div class="story-contact"><span>Have feedback on KaleCancer, or a clinical question or cancer cohort you'd like to explore with us?</span><a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a></div></div>`;
     const spine = `<nav class="story-spine" aria-label="Story stages">${Object.entries(SECTIONS).map(([key,d],i)=>`<button class="spine-step${i===0?' is-active':''}" data-scroll-stage="${key}">${d.label}</button>`).join('')}</nav>`;
     const chapters = visibleSections.map(([key,d],sectionIndex)=>{
       const cards = list.filter(c=>c.journey===key);
-      const pipeline = key==='built' ? `<div class="pipeline-visual" aria-label="KaleCancer pipeline"><div class="pipe-step"><b>01 · Encode</b><span>TabICL + Attention-MIL</span></div><div class="pipe-step"><b>02 · Fuse</b><span>Early, intermediate, or late</span></div><div class="pipe-step"><b>03 · Evaluate</b><span>C-index, td-AUC, Brier</span></div><div class="pipe-step"><b>04 · Interpret</b><span>Risk over time</span></div></div>` : '';
-      return `<section class="story-section chapter-${key}" id="story-${key}" style="--h:${d.hue}"><header class="story-section-head"><span class="section-number">0${sectionIndex+1}</span><div><h2>${d.label}</h2>${SECTION_COPY[key]?`<p>${SECTION_COPY[key]}</p>`:''}</div></header>${key==='gaps'?caseStats:''}<div class="chapter-grid">${pipeline}${cards.map((c,i)=>storyCard(c,i+1,key)).join('')}</div></section>`;
+      const pipeline = key==='built' ? `<div class="pipeline-block"><div class="pipeline-head"><span class="pipeline-legend">Currently supported</span></div><div class="pipeline-visual" aria-label="KaleCancer pipeline"><div class="pipe-step"><b>01 · Encode</b><ul class="pipe-methods"><li>TabICL (clinical)</li><li>Attention-MIL (WSI)</li></ul></div><div class="pipe-step"><b>02 · Fuse</b><ul class="pipe-methods"><li>Early</li><li>Intermediate</li><li>Late</li></ul></div><div class="pipe-step"><b>03 · Evaluate</b><ul class="pipe-methods"><li>C-index</li><li>td-AUC</li><li>Brier score</li></ul></div><div class="pipe-step"><b>04 · Interpret</b><ul class="pipe-methods"><li>Attention scores (WSI)</li></ul></div></div></div>` : '';
+      return `<section class="story-section chapter-${key}" id="story-${key}" style="--h:${d.hue}"><header class="story-section-head"><span class="section-number">0${sectionIndex+1}</span><div><h2>${d.label}</h2></div></header>${key==='gaps'?caseStats:''}<div class="chapter-grid">${pipeline}${cards.map((c,i)=>storyCard(c,i+1,key)).join('')}</div></section>`;
     }).join('');
     els.treeView.innerHTML = intro + spine + chapters;
-    els.treeView.querySelectorAll('[data-scroll-stage]').forEach(btn=>btn.addEventListener('click', ()=>{
-      const target = document.getElementById(`story-${btn.dataset.scrollStage}`);
-      if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
-    }));
-    const sections = [...els.treeView.querySelectorAll('.story-section')];
-    els.treeView.onscroll = ()=>{
-      let active = sections[0]?.id.replace('story-','');
-      sections.forEach(s=>{ if(s.getBoundingClientRect().top < 210) active=s.id.replace('story-',''); });
-      els.treeView.querySelectorAll('.spine-step').forEach(b=>b.classList.toggle('is-active',b.dataset.scrollStage===active));
-    };
+    els.treeView.querySelectorAll('[data-scroll-stage]').forEach(btn=>btn.addEventListener('click', ()=>scrollToStage(btn.dataset.scrollStage)));
+    updateActiveStage();
   }
 
   // ---------------- detail overlay ----------------

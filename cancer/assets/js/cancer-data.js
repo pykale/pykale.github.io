@@ -74,7 +74,7 @@
       caution:null,
     },
     { id:'gap-binary', journey:'gaps', primaryDataType:'combined', kind:'gap',
-      title:'Extension 2: time-to-event prediction',
+      title:'Research gap 2: time-to-event prediction',
       subtitle:'"Will this patient die within 3 years?" — HANCOCK\'s own models answer yes or no, throwing away exactly when.',
       dataTypes:['combined'],
       summary:"HANCOCK's published models predict a binary outcome — will this patient die within a fixed window, yes or no. A binary answer treats a patient who dies at month 4 the same as one who dies at month 35. The dataset's own authors point to Cox-based, time-to-event risk modelling as a natural next step — not yet built into their published benchmark.",
@@ -85,7 +85,7 @@
       evidence:null, caution:null,
     },
     { id:'gap-fusion', journey:'gaps', primaryDataType:'combined', kind:'gap',
-      title:'Extension 1: richer cross-modal fusion',
+      title:'Research gap 1: fusing highly heterogeneous data',
       subtitle:'Features are extracted once, concatenated, then fixed — the authors call end-to-end joint training unexplored.',
       dataTypes:['combined'],
       summary:"HANCOCK's own fusion approach encodes each modality once, concatenates the results, and trains a single fixed classifier on top. There is no joint, end-to-end training across modalities, and no way to try a different fusion strategy without redoing the feature extraction. The dataset's authors call this out directly as unexplored in their own discussion.",
@@ -97,7 +97,7 @@
       caution:null,
     },
     { id:'gap-duplicated', journey:'gaps', primaryDataType:'general', kind:'gap',
-      title:'Extension 3: reusable evaluation',
+      title:'Research gap 3: standardised, reusable evaluation',
       subtitle:'Without a shared tool, separate teams rebuild the same processing-embed-fuse-evaluate pipeline from scratch, with no standard way to compare results.',
       dataTypes:['general'],
       summary:"This third gap isn't named in HANCOCK's own paper — it's the KaleCancer team's own observation about the field: without a unified tool, Team A, Team B and Team C each independently repeat the same steps — processing, embeddings, fusion, evaluation — on the same kind of data, with no standardisation or reproducibility across their results.",
@@ -271,24 +271,24 @@
       summary:'HANCOCK provides matched patient information, pathology material and long-term outcomes for 763 patients. It is the present test bed for KaleCancer, rather than a limitation of the project.'
     },
     'gap-fusion':{
-      title:'Extension 1: richer cross-modal fusion',
+      title:'Research gap 1: fusing highly heterogeneous data',
       subtitle:'Combine learned image representations with other matched patient information.',
-      summary:'The extension is fuller integration of learned pathology representations with clinical and, when available, molecular data. The published HANCOCK work already combined clinical features with TMA-derived cell densities.'
+      summary:'Whole-slide pathology images and tabular clinical records differ greatly in scale and structure, which makes them hard to combine in one model. The published HANCOCK work fused clinical features with numeric TMA-derived cell densities, but did not integrate learned whole-slide image representations with tabular clinical data.'
     },
     'gap-binary':{
-      title:'Extension 2: time-to-event prediction',
+      title:'Research gap 2: time-to-event prediction',
       subtitle:'Estimate risk over time while accounting for censored follow-up.',
-      summary:'KaleCancer supports survival modelling so outcomes can be represented as time to an event, rather than only as a fixed-horizon binary label.'
+      summary:'Rather than predicting only a fixed-horizon binary label, KaleCancer supports survival modelling, which represents outcomes as time to an event and accounts for censored follow-up. The resulting risk-over-time estimates support patient risk stratification and care prioritisation.'
     },
     'gap-duplicated':{
-      title:'Extension 3: reusable evaluation',
+      title:'Research gap 3: standardised, reusable evaluation',
       subtitle:'Compare baselines and fusion choices on consistent patient partitions.',
-      summary:'A shared evaluation protocol makes experiments easier to reproduce and separates changes in modelling from changes in data preparation or partitioning.'
+      summary:'A standardised, shared evaluation protocol makes experiments easier to reproduce and separates changes in modelling from changes in data preparation or partitioning.'
     },
     'one-pipeline':{
       title:'A reusable multimodal workflow',
       subtitle:'A common route from patient data to evaluated time-to-event risk.',
-      summary:'The workflow connects loading, preparation, representation learning, fusion, survival prediction and evaluation while keeping dataset-specific code in examples.'
+      summary:'The workflow seamlessly connects data loading, data preparation, encoding, fusion, survival prediction, evaluation and interpretation, while keeping dataset-specific code in separate examples.'
     },
     'fusion-config':{
       title:'Configurable fusion',
