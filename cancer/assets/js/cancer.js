@@ -595,7 +595,7 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       ${resultMetrics(c)}
       <p class="tcard-summary">${c.summary}</p>
       <div class="tcard-mods">${c.dataTypes.map(modChip).join('')}</div>
-      <div class="tcard-foot">${group==='ask'?'<a class="tcard-cta" href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a>':''}<p class="source-line tcard-refs">Public references: <a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> · <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a></p></div>
+      ${group==='ask'?'<div class="tcard-foot"><a class="tcard-cta" href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a></div>':''}
     </article>`;
   }
 
@@ -654,7 +654,6 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       <p class="subtitle">${c.subtitle}</p>
       <div class="panel-section"><h4>In plain terms</h4><p>${c.summary}</p></div>
       ${c.journey==='ask' ? `<div class="panel-section"><h4>Feedback and enquiries</h4><p>Have feedback on KaleCancer, or a clinical question or cancer cohort you'd like to explore with us? <a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Send it through our feedback and enquiries form</a> and we will follow up with you.</p></div>` : ''}
-      <div class="panel-section"><h4>Public references</h4><p><a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> · <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a></p></div>
     `;
     document.getElementById('closePanel').addEventListener('click', closePanel);
     els.scrim.classList.add('is-open');
