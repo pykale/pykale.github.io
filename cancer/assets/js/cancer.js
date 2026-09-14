@@ -620,7 +620,7 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       return;
     }
     const visibleSections = Object.entries(SECTIONS).filter(([key])=>list.some(c=>c.journey===key));
-    const intro = `<div class="story-intro"><img class="hero-cell" src="assets/images/cancer-cell.png" alt="" aria-hidden="true"><p class="story-kicker">Multimodal survival modelling · research narrative</p><h2>From patient data to reliable risk-over-time research.</h2><p>See how a clinical question, the HANCOCK case study and a reusable KaleCancer workflow connect to evaluation and the next study.</p><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>3</strong><span>proposed extensions</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span></span><span class="story-stat"><strong>${STORY_CAPABILITIES.length}</strong><span>key points</span></span></div></div>`;
+    const intro = `<div class="story-intro"><img class="hero-cell" src="assets/images/cancer-cell.png" alt="" aria-hidden="true"><p class="story-kicker">Multimodal survival modelling · research narrative</p><h2>From patient data to reliable risk-over-time research.</h2><p>See how a clinical question, the HANCOCK case study and a reusable KaleCancer workflow connect to evaluation and the next study.</p><div class="story-contact"><span>Have a clinical question, cohort or idea to explore with us?</span><a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Collaborate with us →</a></div><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>3</strong><span>proposed extensions</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span></span><span class="story-stat"><strong>${STORY_CAPABILITIES.length}</strong><span>key points</span></span></div></div>`;
     const spine = `<nav class="story-spine" aria-label="Story stages">${Object.entries(SECTIONS).map(([key,d],i)=>`<button class="spine-step${i===0?' is-active':''}" data-scroll-stage="${key}">${d.label}</button>`).join('')}</nav>`;
     const chapters = visibleSections.map(([key,d],sectionIndex)=>{
       const cards = list.filter(c=>c.journey===key);
@@ -657,6 +657,7 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       <h2>${c.title}</h2>
       <p class="subtitle">${c.subtitle}</p>
       <div class="panel-section"><h4>In plain terms</h4><p>${c.summary}</p></div>
+      ${c.journey==='ask' ? `<div class="panel-section"><h4>Get in touch</h4><p>Interested in collaborating on a KaleCancer study? <a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Share your details through our collaboration form</a> and we will follow up with you.</p></div>` : ''}
       <div class="panel-section"><h4>Public references</h4><p><a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> · <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a></p></div>
     `;
     document.getElementById('closePanel').addEventListener('click', closePanel);

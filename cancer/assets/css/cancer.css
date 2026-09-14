@@ -76,6 +76,7 @@
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:10px; padding:14px 8px 18px; border-bottom:1px solid var(--line);
     background-image: radial-gradient(var(--dot) 1px, transparent 1px); background-size: 12px 12px;
     background-position: -4px -4px; margin: -6px -6px 2px; flex:none;
+    color:inherit; text-decoration:none;
   }
   .brand-mark{ width:58px; height:58px; object-fit:contain; display:block; }
   .brand-text strong{ display:block; font-size:19px; letter-spacing:.01em; }
@@ -138,6 +139,7 @@
   .stage{ flex:1 1 auto; min-width:0; min-height:0; display:flex; flex-direction:column; }
   .topbar{ padding:22px 30px 16px; border-bottom:1px solid var(--line); }
   .topbar h1{ margin:0; font-family:var(--font-display); font-size:25px; font-weight:700; letter-spacing:-.02em; }
+  .topbar h1 a{ color:inherit; text-decoration:none; }
   .topbar .count{ margin-top:4px; font-size:13px; color:#80745d; }
 
   .topbar-cluster{
@@ -260,6 +262,9 @@
   .story-kicker{ margin:0 0 10px; font-size:11px; letter-spacing:.15em; text-transform:uppercase; opacity:.82; }
   .story-intro h2{ max-width:720px; margin:0; font-family:var(--font-display); font-size:clamp(28px,3.2vw,44px); line-height:1.08; letter-spacing:-.035em; }
   .story-intro > p:last-of-type{ max-width:740px; margin:14px 0 0; font-size:14px; line-height:1.7; opacity:.9; }
+  .story-contact{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:18px 0 0; font-size:13.5px; }
+  .story-contact a{ display:inline-flex; align-items:center; padding:6px 13px; border-radius:7px; background:#fff; color:#173b32; font-family:var(--font-mono); font-size:12.5px; font-weight:600; text-decoration:none; }
+  .story-contact a:hover{ background:#e3efe8; }
   .story-stats{ display:flex; gap:28px; margin-top:26px; flex-wrap:wrap; }
   .story-stat{ display:grid; gap:1px; }
   .story-stat strong{ font-size:19px; font-weight:600; }

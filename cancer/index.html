@@ -21,13 +21,13 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
       Back to PyKale
     </a>
-    <div class="brand">
+    <a class="brand" href="./" title="KaleCancer home">
       <img class="brand-mark" src="assets/images/kalecancer-logo.png" alt="KaleCancer logo">
       <div class="brand-text">
         <strong>KaleCancer</strong>
         <span>Multimodal machine learning for cancer</span>
       </div>
-    </div>
+    </a>
 
     <div class="view-toggle" id="viewToggle">
       <button data-view="tree" class="is-active">
@@ -36,7 +36,7 @@
       </button>
       <button data-view="cluster">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="7" r="2.4"/><circle cx="12" cy="17" r="2.4"/><path d="M7.7 7.3l3 8M16.3 8.1l-3 7.2M8.2 6l7.6 1"/></svg>
-        Cluster
+        Visual
       </button>
     </div>
 
@@ -73,7 +73,7 @@
 
   <main class="stage">
     <div class="topbar" id="topbarTree">
-      <h1>The case for KaleCancer</h1>
+      <h1><a href="./" title="KaleCancer home">The case for KaleCancer</a></h1>
       <div class="count" id="treeCount"></div>
     </div>
     <div class="topbar-cluster" id="topbarCluster" hidden>
@@ -109,6 +109,7 @@
     <footer>
       <span>Sources: <a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> and the <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a>.</span>
       <span>Research software · not a clinical or diagnostic tool</span>
+      <span>Interested in collaborating? <a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Get in touch</a></span>
       <span class="copyright">&copy; <span id="copyrightYear"></span> <a href="https://shef-aire.github.io/">AIRE</a>, The University of Sheffield, and KaleCancer contributors. KaleCancer software is available under the <a href="https://github.com/pykale/cancer/blob/main/LICENSE">MIT License</a>.</span>
     </footer>
   </main>
