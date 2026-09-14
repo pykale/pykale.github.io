@@ -21,7 +21,6 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
     systemView: document.getElementById('systemView'),
     topbarTree: document.getElementById('topbarTree'),
     topbarCluster: document.getElementById('topbarCluster'),
-    treeCount: document.getElementById('treeCount'),
     domainList: document.getElementById('domainList'),
     domainListWrap: document.getElementById('domainListWrap'),
     legendPanel: document.getElementById('legendPanel'),
@@ -94,13 +93,12 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
 
   // ---------------- sidebar: story quick list (tree mode) ----------------
   function renderDomainList(){
-    const counts = {}; STORY_CAPABILITIES.forEach(c=>counts[c.journey]=(counts[c.journey]||0)+1);
     const allRow = `<button class="domain-item${filterJourney==='all'?' is-active':''}" data-journey="all">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/></svg>
-        <span class="lbl">All stages</span><span class="cnt">${STORY_CAPABILITIES.length}</span></button>`;
+        <span class="lbl">All stages</span></button>`;
     const rows = Object.entries(SECTIONS).map(([k,d])=>
       `<button class="domain-item${filterJourney===k?' is-active':''}" data-journey="${k}" style="color:hsl(${d.hue} var(--stage-s) var(--stage-l))">
-        ${d.icon}<span class="lbl" style="color:var(--ink-soft)">${d.label}</span><span class="cnt">${counts[k]||0}</span></button>`).join('');
+        ${d.icon}<span class="lbl" style="color:var(--ink-soft)">${d.label}</span></button>`).join('');
     els.domainList.innerHTML = allRow + rows;
   }
   els.domainList.addEventListener('click', e=>{
@@ -575,7 +573,6 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
 
   // ---------------- story chapters ----------------
   const SECTION_COPY = {
-    problem:'Why several patient-data sources and censored outcomes require a coordinated modelling workflow.',
     gaps:'The public case study and three precise extensions beyond its published proof of concept.',
     built:'How reusable loading, encoding, fusion, survival modelling and evaluation fit together.',
     results:'How multimodal inputs and patient partitions are compared consistently in the case study.',
@@ -590,7 +587,7 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
   function storyCard(c, index, group){
     const d = SECTIONS[c.journey];
     const featured = (group==='problem' && index===0) ? ' is-feature' : (group==='problem' && index===1 ? ' is-side' : '');
-    return `<button class="tcard${featured}" data-id="${c.id}" style="--h:${d.hue}">
+    return `<article class="tcard${featured}" data-id="${c.id}" style="--h:${d.hue}">
       <div class="tcard-head">
         <span style="color:hsl(${d.hue} var(--stage-s) var(--stage-l))">${d.icon}</span>
         <div><div class="tcard-title">${c.title}</div><div class="tcard-sub">${c.subtitle}</div></div>
@@ -598,13 +595,12 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       ${resultMetrics(c)}
       <p class="tcard-summary">${c.summary}</p>
       <div class="tcard-mods">${c.dataTypes.map(modChip).join('')}</div>
-      <span class="tcard-cta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/></svg>${group==='ask'?'Explore collaboration':'View details'}</span>
-    </button>`;
+      <div class="tcard-foot">${group==='ask'?'<a class="tcard-cta" href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a>':''}<p class="source-line tcard-refs">Public references: <a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> · <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a></p></div>
+    </article>`;
   }
 
   function renderTree(){
     const list = STORY_CAPABILITIES.filter(matches);
-    els.treeCount.textContent = `${list.length} of ${STORY_CAPABILITIES.length} key points · six-stage research narrative`;
     if(!list.length){
       els.treeView.innerHTML = `<div class="empty">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -620,15 +616,15 @@ document.getElementById('copyrightYear').textContent = new Date().getFullYear();
       return;
     }
     const visibleSections = Object.entries(SECTIONS).filter(([key])=>list.some(c=>c.journey===key));
-    const intro = `<div class="story-intro"><img class="hero-cell" src="assets/images/cancer-cell.png" alt="" aria-hidden="true"><p class="story-kicker">Multimodal survival modelling · research narrative</p><h2>From patient data to reliable risk-over-time research.</h2><p>See how a clinical question, the HANCOCK case study and a reusable KaleCancer workflow connect to evaluation and the next study.</p><div class="story-contact"><span>Have feedback on KaleCancer, or a clinical question or cancer cohort you'd like to explore with us?</span><a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a></div><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>3</strong><span>proposed extensions</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span></span><span class="story-stat"><strong>${STORY_CAPABILITIES.length}</strong><span>key points</span></span></div></div>`;
+    const caseStats = `<div class="case-stats"><p class="story-kicker">Multimodal survival modelling</p><div class="story-stats"><span class="story-stat"><strong>763</strong><span>HANCOCK patients</span></span><span class="story-stat"><strong>3</strong><span>research gaps addressed</span></span><span class="story-stat"><strong>3</strong><span>fusion stages</span></span></div></div>`;
+    const intro = `<div class="story-intro"><img class="hero-cell" src="assets/images/cancer-cell.png" alt="" aria-hidden="true"><h2>From patient data to reliable risk-over-time research.</h2><p>This overview traces the path from a clinical need, through the HANCOCK case study and the reusable KaleCancer workflow, to evaluation and the design of future studies.</p><div class="story-contact"><span>Have feedback on KaleCancer, or a clinical question or cancer cohort you'd like to explore with us?</span><a href="https://forms.gle/Z1WkKLNoZXpWQDSr6" target="_blank" rel="noopener">Feedback and enquiries →</a></div></div>`;
     const spine = `<nav class="story-spine" aria-label="Story stages">${Object.entries(SECTIONS).map(([key,d],i)=>`<button class="spine-step${i===0?' is-active':''}" data-scroll-stage="${key}">${d.label}</button>`).join('')}</nav>`;
     const chapters = visibleSections.map(([key,d],sectionIndex)=>{
       const cards = list.filter(c=>c.journey===key);
       const pipeline = key==='built' ? `<div class="pipeline-visual" aria-label="KaleCancer pipeline"><div class="pipe-step"><b>01 · Encode</b><span>TabICL + Attention-MIL</span></div><div class="pipe-step"><b>02 · Fuse</b><span>Early, intermediate, or late</span></div><div class="pipe-step"><b>03 · Evaluate</b><span>C-index, td-AUC, Brier</span></div><div class="pipe-step"><b>04 · Interpret</b><span>Risk over time</span></div></div>` : '';
-      return `<section class="story-section chapter-${key}" id="story-${key}" style="--h:${d.hue}"><header class="story-section-head"><span class="section-number">0${sectionIndex+1}</span><div><h2>${d.label}</h2><p>${SECTION_COPY[key]}</p></div><span class="section-count">${cards.length} point${cards.length===1?'':'s'}</span></header><div class="chapter-grid">${pipeline}${cards.map((c,i)=>storyCard(c,i+1,key)).join('')}</div></section>`;
+      return `<section class="story-section chapter-${key}" id="story-${key}" style="--h:${d.hue}"><header class="story-section-head"><span class="section-number">0${sectionIndex+1}</span><div><h2>${d.label}</h2>${SECTION_COPY[key]?`<p>${SECTION_COPY[key]}</p>`:''}</div></header>${key==='gaps'?caseStats:''}<div class="chapter-grid">${pipeline}${cards.map((c,i)=>storyCard(c,i+1,key)).join('')}</div></section>`;
     }).join('');
     els.treeView.innerHTML = intro + spine + chapters;
-    els.treeView.querySelectorAll('.tcard').forEach(c=>c.addEventListener('click', ()=>openPanel(c.dataset.id, c)));
     els.treeView.querySelectorAll('[data-scroll-stage]').forEach(btn=>btn.addEventListener('click', ()=>{
       const target = document.getElementById(`story-${btn.dataset.scrollStage}`);
       if(target) target.scrollIntoView({behavior:'smooth',block:'start'});

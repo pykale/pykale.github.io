@@ -263,7 +263,7 @@
     'multimodal-by-nature':{
       title:'Why multimodal survival modelling?',
       subtitle:'Cancer prognosis draws on several patient-data sources and outcomes that unfold over time.',
-      summary:'KaleCancer brings clinical records and medical imaging into a common workflow for time-to-event prediction, where follow-up and censoring matter.'
+      summary:'Routine cancer care generates a wealth of information-rich data, including whole-slide pathology images, demographic details, laboratory results and radiology scans. Yet these modalities are rarely integrated into a single pipeline for time-to-event (survival) prediction, where follow-up and censoring must be handled correctly. KaleCancer brings clinical records and medical imaging together in one reproducible workflow to close this gap.'
     },
     'hancock-benchmark':{
       title:'HANCOCK: the current case study',
