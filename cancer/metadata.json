@@ -1,0 +1,38 @@
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "KaleCancer interactive research narrative",
+  "description": "An interactive research narrative and cluster view for KaleCancer multimodal survival modelling.",
+  "url": "https://pykale.github.io/cancer/",
+  "codeRepository": "https://github.com/pykale/cancer",
+  "license": "https://github.com/pykale/cancer/blob/main/LICENSE",
+  "programmingLanguage": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Python"
+  ],
+  "creator": {
+    "@type": "Organization",
+    "name": "AIRE, The University of Sheffield",
+    "url": "https://shef-aire.github.io/"
+  },
+  "contributor": {
+    "@type": "Organization",
+    "name": "KaleCancer contributors",
+    "url": "https://github.com/pykale/cancer/graphs/contributors"
+  },
+  "isBasedOn": [
+    "https://github.com/pykale/cancer",
+    "https://hancock.research.fau.eu/"
+  ],
+  "keywords": [
+    "cancer",
+    "multimodal machine learning",
+    "survival analysis",
+    "whole-slide imaging",
+    "clinical data",
+    "PyKale"
+  ],
+  "dateModified": "2026-09-14"
+}

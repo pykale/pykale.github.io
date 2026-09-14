@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="An interactive research narrative and cluster view for KaleCancer multimodal survival modelling.">
+<link rel="metadata" type="application/json" href="metadata.json" title="KaleCancer FAIR metadata">
+<link rel="icon" type="image/png" href="assets/images/kalecancer-logo.png">
+<link rel="apple-touch-icon" href="assets/images/kalecancer-logo.png">
+<title>KaleCancer — The Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/cancer.css">
+</head>
+<body>
+
+<div class="app" id="app">
+  <aside class="sidebar">
+    <a class="back-link" href="/" title="pykale.github.io">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+      Back to PyKale
+    </a>
+    <div class="brand">
+      <img class="brand-mark" src="assets/images/kalecancer-logo.png" alt="KaleCancer logo">
+      <div class="brand-text">
+        <strong>KaleCancer</strong>
+        <span>Multimodal machine learning for cancer</span>
+      </div>
+    </div>
+
+    <div class="view-toggle" id="viewToggle">
+      <button data-view="tree" class="is-active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h10M4 18h13"/></svg>
+        Story
+      </button>
+      <button data-view="cluster">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.4"/><circle cx="18" cy="7" r="2.4"/><circle cx="12" cy="17" r="2.4"/><path d="M7.7 7.3l3 8M16.3 8.1l-3 7.2M8.2 6l7.6 1"/></svg>
+        Cluster
+      </button>
+    </div>
+
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="searchInput" placeholder="Search the pitch…" aria-label="Search">
+    </div>
+
+    <div>
+      <button class="filters-head" id="filtersToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16M7 12h10M10 19h4"/></svg>
+        Filters
+        <span class="chev">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+      <div class="filters-body" id="filtersBody" hidden>
+        <div class="facet">
+          <div class="facet-head">Kind</div>
+          <div class="facet-options" id="statusOptions"></div>
+        </div>
+        <div class="facet">
+          <div class="facet-head">Data stream</div>
+          <div class="facet-options" id="dataTypeOptions"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="domainListWrap">
+      <div class="facet-head" style="padding:0 4px">Story arc</div>
+      <div class="domain-list" id="domainList"></div>
+    </div>
+  </aside>
+
+  <main class="stage">
+    <div class="topbar" id="topbarTree">
+      <h1>The case for KaleCancer</h1>
+      <div class="count" id="treeCount"></div>
+    </div>
+    <div class="topbar-cluster" id="topbarCluster" hidden>
+      <div class="cluster-by">
+        <span>Explore</span>
+        <div class="axis-pill" id="axisPill">
+          <button data-axis="journey" class="is-active">Story</button>
+          <button data-axis="pipelinecluster">Pipeline</button>
+          <button data-axis="keywords">Keywords</button>
+        </div>
+      </div>
+      <div class="canvas-tools" id="canvasTools" hidden>
+        <button id="zoomOut" aria-label="Zoom out">−</button>
+        <button id="zoomIn" aria-label="Zoom in">+</button>
+        <button id="resetView" aria-label="Reset view">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="tree-list" id="treeView"></div>
+
+    <div class="cluster-view" id="clusterView" hidden>
+      <div class="system-view" id="systemView"></div>
+      <div class="canvas-viewport" id="viewport" hidden>
+        <div class="canvas-box" id="canvasBox">
+          <svg class="connections" id="connSvg"></svg>
+        </div>
+      </div>
+      <div class="hover-card" id="hoverCard" hidden></div>
+    </div>
+
+    <footer>
+      <span>Sources: <a href="https://github.com/pykale/cancer">KaleCancer / PyKale</a> and the <a href="https://hancock.research.fau.eu/">HANCOCK dataset</a>.</span>
+      <span>Research software · not a clinical or diagnostic tool</span>
+      <span class="copyright">&copy; <span id="copyrightYear"></span> <a href="https://shef-aire.github.io/">AIRE</a>, The University of Sheffield, and KaleCancer contributors. KaleCancer software is available under the <a href="https://github.com/pykale/cancer/blob/main/LICENSE">MIT License</a>.</span>
+    </footer>
+  </main>
+
+  <aside class="legend" id="legendPanel" hidden>
+    <button class="legend-toggle" id="legendToggle" type="button" aria-label="Collapse right sidebar" aria-expanded="true">&#8250;</button>
+    <h4 id="legendTitle">Story</h4>
+    <div class="legend-list" id="legendList"></div>
+    <p class="legend-hint" id="legendHint">Hover a node to see connections to the same data stream.</p>
+  </aside>
+</div>
+
+<div class="scrim" id="scrim">
+  <div class="panel" id="panel" role="dialog" aria-modal="true"></div>
+</div>
+
+<script src="assets/js/cancer-data.js" defer></script>
+<script src="assets/js/cancer.js" defer></script>
+</body>
+</html>

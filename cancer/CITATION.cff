@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use KaleCancer, cite the PyKale project and the relevant dataset or study."
+title: "KaleCancer interactive research narrative"
+type: software
+authors:
+  - name: "KaleCancer contributors"
+    affiliation: "AIRE, The University of Sheffield"
+repository-code: "https://github.com/pykale/cancer"
+url: "https://pykale.github.io/cancer/"
+license: MIT
+keywords:
+  - cancer
+  - machine learning
+  - multimodal learning
+  - survival analysis
+  - PyKale
+
